@@ -1,6 +1,8 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+from .managers import CustomUserManager
+
 
 class User(AbstractUser):
     email = models.EmailField(
@@ -21,6 +23,11 @@ class User(AbstractUser):
     last_name = models.CharField(
         max_length=150, blank=True, verbose_name='Фамилия'
     )
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
+
+    objects = CustomUserManager()
 
     class Meta:
         ordering = ["id"]
