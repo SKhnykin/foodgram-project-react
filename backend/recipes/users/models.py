@@ -5,17 +5,18 @@ from .managers import CustomUserManager
 
 
 class User(AbstractUser):
-    email = models.EmailField(
-        max_length=254,
-        blank=True,
-        unique=True,
-        verbose_name='Адрес электронной почты',
+    CHOICES = (
+        ('user', 'user'), ('moderator', 'moderator'), ('admin', 'admin')
     )
     username = models.CharField(
+        "Username",
         max_length=150,
-        null=True,
         unique=True,
-        verbose_name='Имя пользователя'
+    )
+    email = models.EmailField(
+        max_length=254,
+        unique=True,
+        verbose_name='Адрес электронной почты',
     )
     first_name = models.CharField(
         max_length=150, blank=True, verbose_name='Имя'
@@ -23,9 +24,10 @@ class User(AbstractUser):
     last_name = models.CharField(
         max_length=150, blank=True, verbose_name='Фамилия'
     )
+    role = models.CharField(max_length=150, choices=CHOICES, default='user')
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = ['username',]
 
     objects = CustomUserManager()
 
@@ -33,3 +35,14 @@ class User(AbstractUser):
         ordering = ["id"]
         verbose_name_plural = "Пользователи"
         verbose_name = "Пользователь"
+
+    def __str__(self) -> str:
+        return self.username
+
+    @property
+    def is_admin(self):
+        return self.role == 'admin'
+
+    @property
+    def is_moderator(self):
+        return self.role == 'moderator'
