@@ -8,6 +8,9 @@ User = get_user_model()
 
 
 class Ingredient(models.Model):
+    """
+    Модель ингредиентов.
+    """
     name = models.CharField(
         'Название ингредиента',
         max_length=200)
@@ -25,6 +28,9 @@ class Ingredient(models.Model):
 
 
 class Tag(models.Model):
+    """
+    Модель тагов.
+    """
     name = models.CharField(
         'Имя',
         max_length=60,
@@ -48,6 +54,9 @@ class Tag(models.Model):
 
 
 class Recipe(models.Model):
+    """
+    Модель рецепта.
+    """
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -116,6 +125,9 @@ class RecipeIngredient(models.Model):
 
 
 class Subscribe(models.Model):
+    """
+    Модель подписок
+    """
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -144,6 +156,9 @@ class Subscribe(models.Model):
 
 
 class FavoriteRecipe(models.Model):
+    """
+    Модель избранных рецептов
+    """
     user = models.OneToOneField(
         User,
         on_delete=models.CASCADE,
@@ -171,6 +186,9 @@ class FavoriteRecipe(models.Model):
 
 
 class ShoppingCart(models.Model):
+    """
+    Модель заказов.
+    """
     user = models.OneToOneField(
         User,
         on_delete=models.CASCADE,

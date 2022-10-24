@@ -34,7 +34,11 @@ FILENAME = 'shoppingcart.pdf'
 
 
 class GetObjectMixin:
-    """Миксина для удаления/добавления рецептов избранных/корзины."""
+    """
+    Mixin
+    для удаления рецептов из избранных, добавления рецептов в
+    избранные. Также с удаленными рецептами.
+    """
 
     serializer_class = SubscribeRecipeSerializer
     permission_classes = (AllowAny,)
@@ -47,8 +51,10 @@ class GetObjectMixin:
 
 
 class PermissionAndPaginationMixin:
-    """Миксина для списка тегов и ингридиентов."""
-
+    """
+    Mixin
+    для списка тегов, ингредиентов.
+    """
     permission_classes = (IsAdminOrReadOnly,)
     pagination_class = None
 
@@ -56,7 +62,9 @@ class PermissionAndPaginationMixin:
 class AddAndDeleteSubscribe(
         generics.RetrieveDestroyAPIView,
         generics.ListCreateAPIView):
-    """Подписка и отписка от пользователя."""
+    """
+    Подписка и отписка от пользователя.
+    """
 
     serializer_class = SubscribeSerializer
 
@@ -97,7 +105,9 @@ class AddDeleteFavoriteRecipe(
         GetObjectMixin,
         generics.RetrieveDestroyAPIView,
         generics.ListCreateAPIView):
-    """Добавление и удаление рецепта в/из избранных."""
+    """
+    Работа с избранными рецептами (добавление и удаление).
+    """
 
     def create(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -113,7 +123,9 @@ class AddDeleteShoppingCart(
         GetObjectMixin,
         generics.RetrieveDestroyAPIView,
         generics.ListCreateAPIView):
-    """Добавление и удаление рецепта в/из корзины."""
+    """
+    Работа с корзиной (добавление, удаление).
+    """
 
     def create(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -170,7 +182,7 @@ class UsersViewSet(UserViewSet):
         detail=False,
         permission_classes=(IsAuthenticated,))
     def subscriptions(self, request):
-        """Получить на кого пользователь подписан."""
+        """Получение подписок пользователя."""
 
         user = request.user
         queryset = Subscribe.objects.filter(user=user)
@@ -220,7 +232,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
         methods=['get'],
         permission_classes=(IsAuthenticated,))
     def download_shopping_cart(self, request):
-        """Качаем список с ингредиентами."""
+        """Загрузка списка с ингредиентами."""
 
         buffer = io.BytesIO()
         page = canvas.Canvas(buffer)
@@ -235,7 +247,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
         page.setFont('Vera', 14)
         if shopping_cart:
             indent = 20
-            page.drawString(x_position, y_position, 'Cписок покупок:')
+            page.drawString(x_position, y_position, 'Перечень необходимых покупок:')
             for index, recipe in enumerate(shopping_cart, start=1):
                 page.drawString(
                     x_position, y_position - indent,
@@ -254,7 +266,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
         page.drawString(
             x_position,
             y_position,
-            'Cписок покупок пуст!')
+            'Перечень покупок пуст!')
         page.save()
         buffer.seek(0)
         return FileResponse(buffer, as_attachment=True, filename=FILENAME)
@@ -281,7 +293,7 @@ class IngredientsViewSet(
 
 @api_view(['post'])
 def set_password(request):
-    """Изменить пароль."""
+    """Замена пароля."""
 
     serializer = UserPasswordSerializer(
         data=request.data,
