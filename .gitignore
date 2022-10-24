@@ -133,3 +133,9 @@ dmypy.json
 
 /backend/foodgram/users/migrations
 /backend/foodgram/recipes/migrations/
+/frontend/build
+/frontend/node_modules
+/frontend/public
+/frontend/src
+/frontend/package-lock.json
+/frontend/yarn.lock
