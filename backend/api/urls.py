@@ -1,9 +1,12 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
-from api.views import (AddAndDeleteSubscribe, AddDeleteFavoriteRecipe,
-                       AddDeleteShoppingCart, AuthToken, IngredientsViewSet,
-                       RecipesViewSet, TagsViewSet, UsersViewSet, set_password)
+from api.recipe_views import (AddDeleteFavoriteRecipe,
+                              AddDeleteShoppingCart, IngredientsViewSet,
+                              RecipesViewSet, TagsViewSet
+                              )
+from api.users_views import (AddAndDeleteSubscribe, AuthToken,
+                             UsersViewSet, set_password)
 
 app_name = 'api'
 
