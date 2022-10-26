@@ -8,7 +8,7 @@ EMPTY_MSG = '-пусто-'
 
 class RecipeIngredientAdmin(admin.StackedInline):
     model = RecipeIngredient
-    autocomplete_fields = ('ingredient',)
+    # autocomplete_fields = ('ingredient',)
 
 
 @admin.register(Recipe)
@@ -21,7 +21,7 @@ class RecipeAdmin(admin.ModelAdmin):
         'name', 'cooking_time',
         'author__email', 'ingredients__name')
     list_filter = ('pub_date', 'tags',)
-    inlines = (RecipeIngredientAdmin,)
+    # inlines = (RecipeIngredientAdmin,)
     empty_value_display = EMPTY_MSG
 
     @admin.display(
@@ -42,6 +42,7 @@ class RecipeAdmin(admin.ModelAdmin):
             for item in obj.recipe.values(
                 'ingredient__name',
                 'amount', 'ingredient__measurement_unit')])
+
 
     @admin.display(description='В избранном')
     def get_favorite_count(self, obj):

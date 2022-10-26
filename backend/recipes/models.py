@@ -53,6 +53,27 @@ class Tag(models.Model):
         return self.name
 
 
+class RecipeIngredient(models.Model):
+    ingredient = models.ForeignKey(
+        Ingredient,
+        on_delete=models.CASCADE,
+        related_name='ingredient')
+    amount = models.PositiveSmallIntegerField(
+        default=1,
+        validators=(
+            validators.MinValueValidator(
+                1, message='Мин. количество ингридиентов 1'),),
+        verbose_name='Количество',)
+
+    class Meta:
+        verbose_name = 'Количество ингредиента'
+        verbose_name_plural = 'Количество ингредиентов'
+        ordering = ['-id']
+
+    # def __str__(self):
+    #     return f'{self.ingredient}'
+
+
 class Recipe(models.Model):
     """
     Модель рецепта.
@@ -75,12 +96,13 @@ class Recipe(models.Model):
     cooking_time = models.BigIntegerField(
         'Время приготовления рецепта')
     ingredients = models.ManyToManyField(
-        Ingredient,
-        through='RecipeIngredient')
+        RecipeIngredient,
+        related_name='recipe',
+    )
     tags = models.ManyToManyField(
         Tag,
         verbose_name='Тэги',
-        related_name='recipes')
+        related_name='recipe')
     cooking_time = models.PositiveSmallIntegerField(
         verbose_name='Время приготовления в минутах',
         validators=[validators.MinValueValidator(
@@ -96,32 +118,6 @@ class Recipe(models.Model):
 
     def __str__(self):
         return f'{self.author.email}, {self.name}'
-
-
-class RecipeIngredient(models.Model):
-    recipe = models.ForeignKey(
-        Recipe,
-        on_delete=models.CASCADE,
-        related_name='recipe')
-    ingredient = models.ForeignKey(
-        'Ingredient',
-        on_delete=models.CASCADE,
-        related_name='ingredient')
-    amount = models.PositiveSmallIntegerField(
-        default=1,
-        validators=(
-            validators.MinValueValidator(
-                1, message='Мин. количество ингридиентов 1'),),
-        verbose_name='Количество',)
-
-    class Meta:
-        verbose_name = 'Количество ингредиента'
-        verbose_name_plural = 'Количество ингредиентов'
-        ordering = ['-id']
-        constraints = [
-            models.UniqueConstraint(
-                fields=['recipe', 'ingredient'],
-                name='unique ingredient')]
 
 
 class Subscribe(models.Model):
@@ -162,11 +158,13 @@ class FavoriteRecipe(models.Model):
     user = models.OneToOneField(
         User,
         on_delete=models.CASCADE,
+        blank=True,
         null=True,
         related_name='favorite_recipe',
         verbose_name='Пользователь')
     recipe = models.ManyToManyField(
         Recipe,
+        blank=True,
         related_name='favorite_recipe',
         verbose_name='Избранный рецепт')
 
@@ -193,10 +191,12 @@ class ShoppingCart(models.Model):
         User,
         on_delete=models.CASCADE,
         related_name='shopping_cart',
+        blank=True,
         null=True,
         verbose_name='Пользователь')
     recipe = models.ManyToManyField(
         Recipe,
+        blank=True,
         related_name='shopping_cart',
         verbose_name='Покупка')
 
