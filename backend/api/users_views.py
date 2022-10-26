@@ -16,9 +16,9 @@ from rest_framework.permissions import (SAFE_METHODS, AllowAny,
 from rest_framework.response import Response
 
 from recipes.models import (Subscribe)
-from .serializers import (SubscribeSerializer, TokenSerializer,
-                          UserCreateSerializer, UserListSerializer,
-                          UserPasswordSerializer)
+from .users_serializers import (SubscribeSerializer, TokenSerializer,
+                                UserCreateSerializer, UserListSerializer,
+                                UserPasswordSerializer)
 
 User = get_user_model()
 

@@ -19,9 +19,9 @@ from api.filters import IngredientFilter, RecipeFilter
 from api.permissions import IsAdminOrReadOnly
 from recipes.models import (FavoriteRecipe, Ingredient, Recipe, ShoppingCart,
                             Tag)
-from .serializers import (IngredientSerializer, RecipeReadSerializer,
-                          RecipeWriteSerializer, SubscribeRecipeSerializer,
-                          TagSerializer)
+from .recipe_serializers import (IngredientSerializer, RecipeReadSerializer,
+                                 RecipeWriteSerializer, SubscribeRecipeSerializer,
+                                 TagSerializer)
 
 User = get_user_model()
 FILENAME = 'shoppingcart.pdf'
