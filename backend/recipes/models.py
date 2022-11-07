@@ -13,9 +13,11 @@ class Ingredient(models.Model):
     """
     name = models.CharField(
         'Название ингредиента',
+        blank=False,
         max_length=200)
     measurement_unit = models.CharField(
         'Единица измерения ингредиента',
+        blank=False,
         max_length=200)
 
     class Meta:
@@ -54,7 +56,7 @@ class Tag(models.Model):
 
 
 class RecipeIngredient(models.Model):
-    ingredient = models.ForeignKey(
+    ingredients = models.ForeignKey(
         Ingredient,
         on_delete=models.CASCADE,
         related_name='ingredient')
@@ -70,8 +72,8 @@ class RecipeIngredient(models.Model):
         verbose_name_plural = 'Количество ингредиентов'
         ordering = ['-id']
 
-    # def __str__(self):
-    #     return f'{self.ingredient}'
+    def __str__(self):
+        return f'{self.ingredient}'
 
 
 class Recipe(models.Model):
@@ -120,61 +122,32 @@ class Recipe(models.Model):
         return f'{self.author.email}, {self.name}'
 
 
-class Subscribe(models.Model):
-    """
-    Модель подписок
-    """
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='follower',
-        verbose_name='Подписчик')
-    author = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='following',
-        verbose_name='Автор')
-    created = models.DateTimeField(
-        'Дата подписки',
-        auto_now_add=True)
-
-    class Meta:
-        verbose_name = 'Подписка'
-        verbose_name_plural = 'Подписки'
-        ordering = ['-id']
-        constraints = [
-            models.UniqueConstraint(
-                fields=['user', 'author'],
-                name='unique_subscription')]
-
-    def __str__(self):
-        return f'Пользователь {self.user} -> автор {self.author}'
-
-
 class FavoriteRecipe(models.Model):
     """
     Модель избранных рецептов
     """
-    user = models.OneToOneField(
+    user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         blank=True,
         null=True,
         related_name='favorite_recipe',
         verbose_name='Пользователь')
-    recipe = models.ManyToManyField(
+    recipe = models.ForeignKey(
         Recipe,
+        on_delete=models.CASCADE,
         blank=True,
-        related_name='favorite_recipe',
+        null=True,
+        related_name='is_favorited',
         verbose_name='Избранный рецепт')
 
     class Meta:
         verbose_name = 'Избранный рецепт'
         verbose_name_plural = 'Избранные рецепты'
+        unique_together = [['user', 'recipe']]
 
     def __str__(self):
-        list_ = [item['name'] for item in self.recipe.values('name')]
-        return f'Пользователь {self.user} добавил {list_} в избранные.'
+        return f'{self.recipe.name}'
 
     @receiver(post_save, sender=User)
     def create_favorite_recipe(

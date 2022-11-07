@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from .models import (FavoriteRecipe, Ingredient, Recipe, RecipeIngredient,
-                     ShoppingCart, Subscribe, Tag)
+                     ShoppingCart, Tag)
 
 EMPTY_MSG = '-пусто-'
 
@@ -60,13 +60,6 @@ class TagAdmin(admin.ModelAdmin):
 class IngredientAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'measurement_unit',)
     search_fields = ('name', 'measurement_unit',)
-    empty_value_display = EMPTY_MSG
-
-
-@admin.register(Subscribe)
-class SubscribeAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'author', 'created',)
-    search_fields = ('user__email', 'author__email',)
     empty_value_display = EMPTY_MSG
 
 
