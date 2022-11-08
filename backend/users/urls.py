@@ -1,7 +1,7 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
-from .views import CustomUserViewSet, FollowViewSet
+from .views import CustomUserViewSet, SubscribeViewSet
 
 router = DefaultRouter()
 router.register(r'users', CustomUserViewSet, basename='users')
@@ -10,7 +10,7 @@ urlpatterns = [
     path('', include('djoser.urls')),
     path('auth/', include('djoser.urls.authtoken')),
     path(
-        'users/<int:users_id>/subscribe/', FollowViewSet.as_view(
+        'users/<int:users_id>/subscribe/', SubscribeViewSet.as_view(
             {
                 'post': 'create',
                 'delete': 'destroy'

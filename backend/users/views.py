@@ -32,7 +32,7 @@ class CustomUserViewSet(UserViewSet):
         return self.get_paginated_response(serializer.data)
 
 
-class FollowViewSet(viewsets.ModelViewSet):
+class SubscribeViewSet(viewsets.ModelViewSet):
     """Эндпоинт api/users/subscriptions/"""
     serializer_class = SubscribeSerializer
     queryset = Subscribe.objects.all()

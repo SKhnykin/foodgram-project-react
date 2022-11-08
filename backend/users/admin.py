@@ -1,9 +1,9 @@
 from django.contrib import admin
-# from django.contrib.auth import get_user_model
 
 from .models import User, Subscribe
-# User = get_user_model()
+
 EMPTY_MSG = '-пусто-'
+
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
