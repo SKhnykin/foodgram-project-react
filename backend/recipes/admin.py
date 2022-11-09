@@ -6,9 +6,9 @@ from .models import (FavoriteRecipe, Ingredient, Recipe, RecipeIngredient,
 EMPTY_MSG = '-пусто-'
 
 
-class RecipeIngredientAdmin(admin.StackedInline):
+class RecipeIngredientAdmin(admin.TabularInline):
     model = RecipeIngredient
-    autocomplete_fields = ('ingredients',)
+    #autocomplete_fields = ('ingredients',)
 
 
 @admin.register(Recipe)
