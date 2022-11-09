@@ -131,7 +131,7 @@ dmypy.json
 # .idea
 .idea
 
-/backend/foodgram/users/migrations
+/backend/foodgram/users/migrations/
 /backend/foodgram/recipes/migrations/
 /frontend/build
 /frontend/node_modules
@@ -139,3 +139,4 @@ dmypy.json
 /frontend/src
 /frontend/package-lock.json
 /frontend/yarn.lock
+/backend/media/

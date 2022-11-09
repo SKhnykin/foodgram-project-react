@@ -73,7 +73,7 @@ class RecipeIngredient(models.Model):
         ordering = ['-id']
 
     def __str__(self):
-        return f'{self.ingredient}'
+        return f'{self.ingredients}'
 
 
 class Recipe(models.Model):
@@ -83,7 +83,7 @@ class Recipe(models.Model):
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='recipe',
+        related_name='recipe_author',
         verbose_name='Автор')
     name = models.CharField(
         'Название рецепта',
@@ -99,12 +99,12 @@ class Recipe(models.Model):
         'Время приготовления рецепта')
     ingredients = models.ManyToManyField(
         RecipeIngredient,
-        related_name='recipe',
+        related_name='recipe_ingredients',
     )
     tags = models.ManyToManyField(
         Tag,
         verbose_name='Тэги',
-        related_name='recipe')
+        related_name='recipe_tag')
     cooking_time = models.PositiveSmallIntegerField(
         verbose_name='Время приготовления в минутах',
         validators=[validators.MinValueValidator(
@@ -163,14 +163,14 @@ class ShoppingCart(models.Model):
     user = models.OneToOneField(
         User,
         on_delete=models.CASCADE,
-        related_name='shopping_cart',
+        related_name='shopping_cart_user',
         blank=True,
         null=True,
         verbose_name='Пользователь')
     recipe = models.ManyToManyField(
         Recipe,
         blank=True,
-        related_name='shopping_cart',
+        related_name='is_in_shopping_cart',
         verbose_name='Покупка')
 
     class Meta:

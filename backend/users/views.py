@@ -45,14 +45,14 @@ class SubscribeViewSet(viewsets.ModelViewSet):
         return SubscribeCreateSerializer
 
     def perform_create(self, serializer):
-        following = get_object_or_404(User, pk=self.kwargs.get('users_id'))
+        author = get_object_or_404(User, pk=self.kwargs.get('users_id'))
         if not serializer.is_valid():
             return Response(
                 serializer.errors,
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        return serializer.save(user=self.request.user, following=following)
+        return serializer.save(user=self.request.user, author=author)
 
     def destroy(self, request, users_id):
         serializer = self.get_serializer(data=request.data)
@@ -62,7 +62,7 @@ class SubscribeViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
         instance = Subscribe.objects.filter(
-            following=users_id, user=request.user
+            author=users_id, user=request.user
         )
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)

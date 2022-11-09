@@ -102,7 +102,7 @@ class SubscribeCreateSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = (
             'user',
-            'following'
+            'author'
         )
 
 
@@ -113,6 +113,52 @@ class RecipeShortSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'image', 'cooking_time')
 
 
+
+class SubscribeCreateSerializer(serializers.ModelSerializer):
+    """Обрабатывает запросы на добавление/удаление из подписок"""
+
+    def to_representation(self, value):
+        """Отклик на POST запрос обрабатывается другим сериализатором"""
+        return SubscribeSerializer(
+            value.author,
+            context={
+                'request': self.context.get('request')
+            }
+        ).data
+
+    def validate(self, data):
+        request = self.context.get('request')
+        user = self.context.get('request').user
+        my_view = self.context['view']
+        object_id = my_view.kwargs.get('users_id')
+        if Subscribe.objects.filter(
+            user=user,
+            author=object_id
+        ).exists() and request.method == 'POST':
+            raise serializers.ValidationError({
+                'errors': 'Пользователь уже добавлен в подписки'})
+        if not Subscribe.objects.filter(
+            user=user,
+            author=object_id
+        ).exists() and request.method == 'DELETE':
+            raise serializers.ValidationError({
+                'errors': 'Вы не подписаны на этого пользователя'})
+        if (user.id == int(object_id)
+                and self.context['request'].method == 'POST'):
+            raise serializers.ValidationError(
+                'Нельзя подписаться на самого себя'
+            )
+        return data
+
+    class Meta:
+        model = Subscribe
+        fields = '__all__'
+        read_only_fields = (
+            'user',
+            'author'
+        )
+
+
 class SubscribeSerializer(CustomUserSerializer):
     recipes = serializers.SerializerMethodField()
     recipes_count = serializers.SerializerMethodField()
@@ -121,14 +167,14 @@ class SubscribeSerializer(CustomUserSerializer):
         request = self.context.get('request')
         limit_recipes = request.query_params.get('recipes_limit')
         if limit_recipes:
-            recipes = obj.author_of_recipe.all()[:(int(limit_recipes))]
+            recipes = obj.recipe_author.all()[:(int(limit_recipes))]
         else:
-            recipes = obj.author_of_recipe.all()
+            recipes = obj.recipe_author.all()
         context = {'request': request}
         return RecipeShortSerializer(recipes, many=True, context=context).data
 
     def get_recipes_count(self, obj):
-        return obj.author_of_recipe.all().count()
+        return obj.recipe_author.all().count()
 
     class Meta:
         model = User
