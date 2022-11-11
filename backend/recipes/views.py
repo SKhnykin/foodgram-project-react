@@ -7,9 +7,52 @@ from rest_framework.response import Response
 from users.pagination import LimitPageNumberPagination
 from users.permissions import OwnerOrReadOnly
 
-from .models import FavoriteRecipe, Ingredient, Recipe, ShoppingCart, Tag
-from .serializers import FavoriteRecipeSerializer, IngredientSerializer, CreateRecipeSerializer, RecipeSerializer, ShoppingCartSerializer, TagSerializer
+from .models import (
+    FavoriteRecipe,
+    Ingredient,
+    Recipe,
+    RecipeIngredient,
+    ShoppingCart,
+    Tag
+)
+from .serializers import (
+    FavoriteRecipeSerializer,
+    IngredientSerializer,
+    CreateRecipeSerializer,
+    RecipeSerializer,
+    ShoppingCartSerializer,
+    TagSerializer
+)
 from .filters import IngredientFilter, RecipeFilter
+
+HEADING_SHOPING_LIST = 'Список покупок для приготовления:\n\n'
+
+
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated, ])
+def download_shopping_cart(request):
+    """Формирует и отдает список покупок"""
+    ingredients = RecipeIngredient.objects.filter(
+        recipe_ingredients__is_in_shopping_cart__user=request.user
+    )
+    shopping_dict = {}
+    data = HEADING_SHOPING_LIST
+    for ingredient in ingredients:
+        amount = ingredient.amount
+        name = ingredient.ingredients.name
+        measurement_unit = ingredient.ingredients.measurement_unit
+        if name not in shopping_dict:
+            shopping_dict[name] = {
+                'amount': amount,
+                'measurement_unit': measurement_unit
+            }
+        else:
+            shopping_dict[name]['amount'] += amount
+    for ingredient in shopping_dict:
+        data += ingredient + ' - ' + str(
+            shopping_dict[ingredient]['amount']
+        ) + ' ' + shopping_dict[ingredient]['measurement_unit'] + '\n'
+    return HttpResponse(data, content_type='text/plain')
 
 
 class TagViewSet(viewsets.ModelViewSet):

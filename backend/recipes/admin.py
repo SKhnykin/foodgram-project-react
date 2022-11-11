@@ -42,12 +42,16 @@ class IngredientAdmin(admin.ModelAdmin):
 
 @admin.register(ShoppingCart)
 class SoppingCartAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'get_recipe')
+    list_display = ('id', 'user', 'get_recipe', 'get_counter')
     empty_value_display = EMPTY_MSG
 
     @admin.display(description='Рецепты')
     def get_recipe(self, obj):
-        return obj
+        return obj.recipe.name
+
+    @admin.display(description='Ингредиентов')
+    def get_counter(self, obj):
+        return obj.recipe.ingredients.count()
 
 
 @admin.register(FavoriteRecipe)
