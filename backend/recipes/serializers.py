@@ -4,7 +4,18 @@ from django.core.files.base import ContentFile
 from rest_framework import serializers
 from users.serializers import CustomUserSerializer
 
-from .models import Ingredient, FavoriteRecipe, Recipe, RecipeIngredient, ShoppingCart, Tag
+from .models import (
+    Ingredient,
+    FavoriteRecipe,
+    Recipe,
+    RecipeIngredient,
+    ShoppingCart,
+    Tag
+)
+
+RECIPES_NOT_FOUND = 'Рецепт не найден'
+RECIPES_IN_LIST = 'Рецепт уже добавлен в список'
+RECIPES_NOT_DELETED = 'Рецепт не находится в списке'
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -37,8 +48,8 @@ class Base64ImageField(serializers.ImageField):
 
 
 class RecipeIngredientSerializer(serializers.ModelSerializer):
-    """Обрабатывает данные из 2ух моделей. Таким образом,
-    к ингредиентам добавляется поле "amount"."""
+    """Обрабатывает данные из 2ух моделей,
+    к ингредиентам добавляет поле amount."""
     id = serializers.ReadOnlyField(source="ingredients.id")
     name = serializers.ReadOnlyField(source="ingredients.name")
     measurement_unit = serializers.ReadOnlyField(
@@ -60,7 +71,7 @@ class RecipeSerializer(serializers.ModelSerializer):
     is_in_shopping_cart = serializers.SerializerMethodField()
 
     def get_is_favorited(self, obj):
-        """Если рецепт в избранных, вернет True"""
+        """Проверка на нахождение рецепта в избранных"""
         request = self.context.get('request')
         if request.user.is_anonymous or request is None:
             return False
@@ -93,8 +104,8 @@ class RecipeSerializer(serializers.ModelSerializer):
 
 
 class CreateRecipeIngredientSerializer(serializers.ModelSerializer):
-    """Обрабатывает данные для 2ух моделей. Таким образом,
-    к ингредиентам добавляется поле "amount". Используется для POST запросов
+    """Обрабатывает данные для 2ух моделей
+    к ингредиентам добавляем поле amount. Используем для POST запросов
     на создание рецепта."""
     id = serializers.PrimaryKeyRelatedField(
         source='ingredients', queryset=Ingredient.objects.all()
@@ -106,13 +117,13 @@ class CreateRecipeIngredientSerializer(serializers.ModelSerializer):
 
 
 class CreateRecipeSerializer(serializers.ModelSerializer):
-    """Служит для создания рецептов"""
+    """Создание рецептов"""
     image = Base64ImageField(required=True, allow_null=True)
     tags = serializers.ListField(required=True)
     ingredients = CreateRecipeIngredientSerializer(required=True, many=True)
 
     def to_representation(self, value):
-        """Отклик на POST запрос обрабатывается другим сериализатором"""
+        """POST запрос обрабатываем другим сериализатором"""
         return RecipeSerializer(
             value,
             context={'request': self.context.get('request')}
@@ -162,7 +173,7 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
 
 
 class ShoppingCartSerializer(serializers.ModelSerializer):
-    """Обрабатывает эндпоинт /api/recipes/{id}/shopping_cart/"""
+    """Обрабатываем эндпоинт /api/recipes/{id}/shopping_cart/"""
     main_model = ShoppingCart
     id = serializers.ReadOnlyField(
         source='recipe.id',
@@ -189,19 +200,19 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
         object_id = my_view.kwargs.get('recipes_id')
         if not Recipe.objects.filter(id=object_id).exists():
             raise serializers.ValidationError({
-                'errors': 'Рецепт не найден'})
+                'errors': RECIPES_NOT_FOUND})
         if self.main_model.objects.filter(
             user=user,
             recipe=object_id
         ).exists() and request.method == 'POST':
             raise serializers.ValidationError({
-                'errors': 'Рецепт уже добавлен в список'})
+                'errors': RECIPES_IN_LIST})
         if not self.main_model.objects.filter(
             user=user,
             recipe=object_id
         ).exists() and request.method == 'DELETE':
             raise serializers.ValidationError({
-                'errors': 'Рецепт не находится в списке'})
+                'errors': RECIPES_NOT_DELETED})
         return data
 
 

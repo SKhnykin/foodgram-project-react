@@ -40,14 +40,6 @@ class IngredientAdmin(admin.ModelAdmin):
     empty_value_display = EMPTY_MSG
 
 
-@admin.register(FavoriteRecipe)
-class FavoriteRecipeAdmin(admin.ModelAdmin):
-    list_display = (
-        'recipe',
-        'user'
-    )
-
-
 @admin.register(ShoppingCart)
 class SoppingCartAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'get_recipe', 'get_count')
@@ -56,8 +48,19 @@ class SoppingCartAdmin(admin.ModelAdmin):
     @admin.display(description='Рецепты')
     def get_recipe(self, obj):
         return [
-            f'{item["name"]} ' for item in obj.recipe.values('name')[:5]]
+            # f'{item["name"]} ' for item in obj.recipe.values('name')[:5]]
+            'kvnlksdfnvlkan'
+        ]
 
     @admin.display(description='В избранных')
     def get_count(self, obj):
-        return obj.recipe.count()
+        # return obj.recipe_ingredients.count()
+        return 1
+
+
+@admin.register(FavoriteRecipe)
+class FavoriteAdmin(admin.ModelAdmin):
+    list_display = (
+        'recipe',
+        'user'
+    )

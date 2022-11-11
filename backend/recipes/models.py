@@ -117,6 +117,7 @@ class Recipe(models.Model):
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
         ordering = ('-pub_date', )
+        verbose_name = 'recipe'
 
     def __str__(self):
         return f'{self.author.email}, {self.name}'
@@ -131,15 +132,16 @@ class FavoriteRecipe(models.Model):
         on_delete=models.CASCADE,
         blank=True,
         null=True,
-        related_name='favorite_recipe',
-        verbose_name='Пользователь')
+        verbose_name='Пользователь'
+    )
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
         blank=True,
         null=True,
         related_name='is_favorited',
-        verbose_name='Избранный рецепт')
+        verbose_name='Избранный рецепт'
+    )
 
     class Meta:
         verbose_name = 'Избранный рецепт'
@@ -149,41 +151,27 @@ class FavoriteRecipe(models.Model):
     def __str__(self):
         return f'{self.recipe.name}'
 
-    @receiver(post_save, sender=User)
-    def create_favorite_recipe(
-            sender, instance, created, **kwargs):
-        if created:
-            return FavoriteRecipe.objects.create(user=instance)
-
 
 class ShoppingCart(models.Model):
-    """
-    Модель заказов.
-    """
-    user = models.OneToOneField(
+    user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='shopping_cart_user',
         blank=True,
         null=True,
-        verbose_name='Пользователь')
-    recipe = models.ManyToManyField(
+    )
+
+    recipe = models.ForeignKey(
         Recipe,
+        on_delete=models.CASCADE,
         blank=True,
-        related_name='is_in_shopping_cart',
-        verbose_name='Покупка')
+        null=True,
+        related_name='is_in_shopping_cart'
+    )
 
     class Meta:
         verbose_name = 'Покупка'
         verbose_name_plural = 'Покупки'
-        ordering = ['-id']
+        unique_together = [['user', 'recipe']]
 
     def __str__(self):
-        list_ = [item['name'] for item in self.recipe.values('name')]
-        return f'Пользователь {self.user} добавил {list_} в покупки.'
-
-    @receiver(post_save, sender=User)
-    def create_shopping_cart(
-            sender, instance, created, **kwargs):
-        if created:
-            return ShoppingCart.objects.create(user=instance)
+        return f'{self.recipe.name}'

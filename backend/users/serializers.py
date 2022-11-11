@@ -3,6 +3,8 @@ from recipes.models import Recipe
 from rest_framework import serializers
 from users.models import User, Subscribe
 
+USER_ADD_SUBS = 'Пользователь уже добавлен в подписки'
+ME_SUBS_NOT_EXISTS = 'Вы не подписаны на этого пользователя'
 SUBSCRIBE_CANNOT_CREATE_TWICE = 'Нельзя подписаться дважды!'
 SUBSCRIBE_CANNOT_CREATE_TO_YOURSELF = 'Нельзя подписаться на самого себя!'
 SUBSCRIBE_CANNOT_DELETE = (
@@ -136,17 +138,17 @@ class SubscribeCreateSerializer(serializers.ModelSerializer):
             author=object_id
         ).exists() and request.method == 'POST':
             raise serializers.ValidationError({
-                'errors': 'Пользователь уже добавлен в подписки'})
+                'errors': USER_ADD_SUBS})
         if not Subscribe.objects.filter(
             user=user,
             author=object_id
         ).exists() and request.method == 'DELETE':
             raise serializers.ValidationError({
-                'errors': 'Вы не подписаны на этого пользователя'})
+                'errors': ME_SUBS_NOT_EXISTS})
         if (user.id == int(object_id)
                 and self.context['request'].method == 'POST'):
             raise serializers.ValidationError(
-                'Нельзя подписаться на самого себя'
+                SUBSCRIBE_CANNOT_CREATE_TO_YOURSELF
             )
         return data
 

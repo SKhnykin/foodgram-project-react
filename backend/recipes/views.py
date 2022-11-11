@@ -50,7 +50,7 @@ class ShoppingCartViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticated, OwnerOrReadOnly)
 
     def perform_create(self, serializer):
-        recipe = get_object_or_404(Recipe, pk=self.kwargs.get('recipes_id'))
+        recipe = get_object_or_404(Recipe, pk=self.kwargs.get('recipe_id'))
         if not serializer.is_valid():
             return Response(
                 serializer.errors,
