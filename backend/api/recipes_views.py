@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from users.pagination import LimitPageNumberPagination
 from users.permissions import OwnerOrReadOnly
 
-from .models import (
+from recipes.models import (
     FavoriteRecipe,
     Ingredient,
     Recipe,
@@ -15,7 +15,7 @@ from .models import (
     ShoppingCart,
     Tag
 )
-from .serializers import (
+from .resipes_serializer import (
     FavoriteRecipeSerializer,
     IngredientSerializer,
     CreateRecipeSerializer,

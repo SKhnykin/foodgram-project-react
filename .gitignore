@@ -140,3 +140,4 @@ dmypy.json
 /frontend/package-lock.json
 /frontend/yarn.lock
 /backend/media/
+/backend/api/migrations
