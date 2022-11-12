@@ -8,7 +8,6 @@ EMPTY_MSG = '-пусто-'
 
 class RecipeIngredientAdmin(admin.TabularInline):
     model = RecipeIngredient
-    #autocomplete_fields = ('ingredients',)
 
 
 @admin.register(Recipe)

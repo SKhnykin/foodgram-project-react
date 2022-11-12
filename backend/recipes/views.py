@@ -86,7 +86,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
 
 class ShoppingCartViewSet(viewsets.ModelViewSet):
-    """Обработка запросов на добавление/удаление из списка покупок"""
+    """Добавление/удаление из списка покупок"""
     serializer_class = ShoppingCartSerializer
     main_model = ShoppingCart
     queryset = main_model.objects.all()
@@ -116,7 +116,7 @@ class ShoppingCartViewSet(viewsets.ModelViewSet):
 
 
 class FavoriteViewSet(ShoppingCartViewSet):
-    """Обработка запросов на добавление/удаление из списка избранных"""
+    """Добавление/удаление из списка избранных"""
     serializer_class = FavoriteRecipeSerializer
     main_model = FavoriteRecipe
     permission_classes = (permissions.IsAuthenticated, OwnerOrReadOnly)
