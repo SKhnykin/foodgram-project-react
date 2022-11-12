@@ -155,7 +155,6 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
         self.add_ingredients(ingredients_data, recipes)
         return super().update(recipes, validated_data)
 
-
     class Meta:
         model = Recipe
         fields = (
