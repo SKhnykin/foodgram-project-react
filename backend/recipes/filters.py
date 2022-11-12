@@ -16,9 +16,9 @@ class IngredientFilter(filters.FilterSet):
 
 class RecipeFilter(filters.FilterSet):
     """
-    Фильтры для сортировки выдачи рецептов:
-    - по тегам
+    Фильтры:
     - по наличию в избранном
+    - по тегам
     - по наличию в списке покупок.
     """
     is_favorited = filters.BooleanFilter(
