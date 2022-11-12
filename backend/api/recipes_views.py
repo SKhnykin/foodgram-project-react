@@ -4,8 +4,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from users.pagination import LimitPageNumberPagination
-from users.permissions import OwnerOrReadOnly
+from api.pagination import LimitPageNumberPagination
+from api.permissions import OwnerOrReadOnly
 
 from recipes.models import (
     FavoriteRecipe,
@@ -15,7 +15,7 @@ from recipes.models import (
     ShoppingCart,
     Tag
 )
-from .resipes_serializer import (
+from .resipes_serializers import (
     FavoriteRecipeSerializer,
     IngredientSerializer,
     CreateRecipeSerializer,

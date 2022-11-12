@@ -4,10 +4,10 @@ from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from .models import Subscribe, User
+from users.models import Subscribe, User
 from .pagination import LimitPageNumberPagination
 from .permissions import OwnerOrReadOnly
-from .serializers import SubscribeCreateSerializer, SubscribeSerializer
+from .users_serializers import SubscribeCreateSerializer, SubscribeSerializer
 
 
 class CustomUserViewSet(UserViewSet):

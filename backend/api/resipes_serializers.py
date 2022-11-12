@@ -2,7 +2,7 @@ import base64
 
 from django.core.files.base import ContentFile
 from rest_framework import serializers
-from users.serializers import CustomUserSerializer
+from .users_serializers import CustomUserSerializer
 
 from recipes.models import (
     Ingredient,
@@ -129,16 +129,19 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
             context={'request': self.context.get('request')}
         ).data
 
-    def create(self, validated_data):
-        tag_data = validated_data.pop('tags')
-        ingredients_data = validated_data.pop('ingredients')
-        recipes = Recipe.objects.create(**validated_data)
-        recipes.tags.set(tag_data)
+    def add_ingredients(self, ingredients_data, recipes):
         for ingredient in ingredients_data:
             current_ingredient, status = (
                 RecipeIngredient.objects.get_or_create(**ingredient)
             )
             recipes.ingredients.add(current_ingredient)
+
+    def create(self, validated_data):
+        tag_data = validated_data.pop('tags')
+        ingredients_data = validated_data.pop('ingredients')
+        recipes = Recipe.objects.create(**validated_data)
+        recipes.tags.set(tag_data)
+        self.add_ingredients(ingredients_data, recipes)
         return recipes
 
     def update(self, instance, validated_data):
@@ -146,19 +149,12 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
         ingredients_data = validated_data.pop('ingredients')
         if validated_data.get('image') is not None:
             instance.image = validated_data.pop('image')
-        instance.name = validated_data.pop('name')
-        instance.text = validated_data.pop('text')
-        instance.cooking_time = validated_data.pop('cooking_time')
         recipes = instance
         recipes.tags.set(tag_data)
         recipes.ingredients.clear()
-        for ingredient in ingredients_data:
-            current_ingredient, status = (
-                RecipeIngredient.objects.get_or_create(**ingredient)
-            )
-            recipes.ingredients.add(current_ingredient)
-        recipes.save()
-        return recipes
+        self.add_ingredients(ingredients_data, recipes)
+        return super().update(recipes, validated_data)
+
 
     class Meta:
         model = Recipe
