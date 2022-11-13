@@ -50,10 +50,10 @@ class Base64ImageField(serializers.ImageField):
 class RecipeIngredientSerializer(serializers.ModelSerializer):
     """Обрабатывает данные из 2ух моделей,
     к ингредиентам добавляет поле amount."""
-    id = serializers.ReadOnlyField(source="ingredients.id")
-    name = serializers.ReadOnlyField(source="ingredients.name")
+    id = serializers.ReadOnlyField(source="ingredient.id")
+    name = serializers.ReadOnlyField(source="ingredient.name")
     measurement_unit = serializers.ReadOnlyField(
-        source="ingredients.measurement_unit"
+        source="ingredient.measurement_unit"
     )
 
     class Meta:
@@ -150,10 +150,12 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
         if validated_data.get('image') is not None:
             instance.image = validated_data.pop('image')
         recipes = instance
+        recipes.tags.clear()
         recipes.tags.set(tag_data)
         recipes.ingredients.clear()
         self.add_ingredients(ingredients_data, recipes)
         return super().update(recipes, validated_data)
+
 
     class Meta:
         model = Recipe

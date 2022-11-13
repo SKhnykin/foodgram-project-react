@@ -24,7 +24,7 @@ class Ingredient(models.Model):
         verbose_name_plural = 'Ингредиенты'
 
     def __str__(self):
-        return f'{self.name}, {self.measurement_unit}.'
+        return f'{self.name}'
 
 
 class Tag(models.Model):
@@ -57,7 +57,7 @@ class RecipeIngredient(models.Model):
     ingredients = models.ForeignKey(
         Ingredient,
         on_delete=models.CASCADE,
-        related_name='ingredient')
+        related_name='ingredient_recipe')
     amount = models.PositiveSmallIntegerField(
         default=1,
         validators=(
@@ -118,7 +118,7 @@ class Recipe(models.Model):
         verbose_name = 'recipe'
 
     def __str__(self):
-        return f'{self.author.email}, {self.name}'
+        return f'{self.name}'
 
 
 class FavoriteRecipe(models.Model):

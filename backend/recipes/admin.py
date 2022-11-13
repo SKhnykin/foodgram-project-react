@@ -6,9 +6,9 @@ from .models import (FavoriteRecipe, Ingredient, Recipe, RecipeIngredient,
 EMPTY_MSG = '-пусто-'
 
 
-class RecipeIngredientAdmin(admin.TabularInline):
-    model = RecipeIngredient
-
+# class RecipeIngredientAdmin(admin.TabularInline):
+#     model = RecipeIngredient
+admin.site.register(RecipeIngredient)
 
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
