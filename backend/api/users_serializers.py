@@ -63,51 +63,6 @@ class UserMeSerializer(serializers.ModelSerializer):
         read_only_fields = ('role',)
 
 
-class SubscribeCreateSerializer(serializers.ModelSerializer):
-    """Обрабатывает запросы на добавление/удаление из подписок"""
-
-    def to_representation(self, value):
-        """Отклик на POST запрос обрабатывается другим сериализатором"""
-        return SubscribeSerializer(
-            value.following,
-            context={
-                'request': self.context.get('request')
-            }
-        ).data
-
-    def validate(self, data):
-        request = self.context.get('request')
-        user = self.context.get('request').user
-        my_view = self.context['view']
-        object_id = my_view.kwargs.get('users_id')
-        if Subscribe.objects.filter(
-            user=user,
-            author=object_id
-        ).exists() and request.method == 'POST':
-            raise serializers.ValidationError({
-                'errors': SUBSCRIBE_CANNOT_CREATE_TWICE})
-        if not Subscribe.objects.filter(
-            user=user,
-            author=object_id
-        ).exists() and request.method == 'DELETE':
-            raise serializers.ValidationError({
-                'errors': SUBSCRIBE_CANNOT_DELETE})
-        if (user.id == int(object_id)
-                and self.context['request'].method == 'POST'):
-            raise serializers.ValidationError(
-                SUBSCRIBE_CANNOT_CREATE_TO_YOURSELF
-            )
-        return data
-
-    class Meta:
-        model = Subscribe
-        fields = '__all__'
-        read_only_fields = (
-            'user',
-            'author'
-        )
-
-
 class RecipeShortSerializer(serializers.ModelSerializer):
     """Вспомогательный сериализатор для SubscribeSerializer"""
     class Meta:
