@@ -115,7 +115,6 @@ class RecipeShortSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'image', 'cooking_time')
 
 
-
 class SubscribeCreateSerializer(serializers.ModelSerializer):
     """Обрабатывает запросы на добавление/удаление из подписок"""
 
