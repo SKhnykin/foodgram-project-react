@@ -129,4 +129,3 @@ ALLOWED_HOSTS=
 ```url
 http://127.0.0.1/api/docs/
 ```
-
