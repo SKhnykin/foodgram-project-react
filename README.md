@@ -1,3 +1,4 @@
+![foodgram_workflow](https://github.com/SKhnykin/foodgram-project-react/actions/workflows/foodgram_workflow.yml/badge.svg)
 # Продуктовый помощник Foodgram
 
 ## Описание проекта Foodgram
