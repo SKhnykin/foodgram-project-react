@@ -19,7 +19,7 @@ services:
       - ./.env
 
   frontend:
-    image: staskhnykin/foodgram-frontend:latest
+    image: staskhnykin/foodgram_frontend:latest
     volumes:
         - ../frontend/:/app/result_build/
 
