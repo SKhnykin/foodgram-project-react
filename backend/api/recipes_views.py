@@ -15,7 +15,7 @@ from recipes.models import (
     ShoppingCart,
     Tag
 )
-from .resipes_serializers import (
+from .recipes_serializers import (
     FavoriteRecipeSerializer,
     IngredientSerializer,
     CreateRecipeSerializer,
